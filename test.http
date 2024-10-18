@@ -1,0 +1,33 @@
+
+POST http://localhost:4004/odata/v4/rims/RIMS_REQUEST
+Content-Type: application/json
+
+{
+  "RequestCode": 12345,
+  "typeOfRequest": "TypeA",
+  "collectionLocationType": "Location1",
+  "well": "WellName",
+  "wBS": "WBS001",
+  "requesterLocation": "RequesterLocation1",
+  "projectType": "Project1",
+  "remarks": "This is a remark for the request.",
+  "materials": [
+    {
+      "itemCode": "M001",
+      "description": "Material Description 1",
+      "uOM": "kg",
+      "quantity": 100.000,
+      "remarks_1": "Remarks for material 1"
+    },
+    {
+      "itemCode": "M002",
+      "description": "Material Description 2",
+      "uOM": "m",
+      "quantity": 200.500,
+      "remarks_1": "Remarks for material 2"
+    }
+  ]
+}
+
+###
+GET  http://localhost:4004/odata/v4/rims/RIMS_REQUEST?$expand=materials
