@@ -3,24 +3,25 @@ POST http://localhost:4004/odata/v4/rims/RIMS_REQUEST
 Content-Type: application/json
 
 {
-  "RequestCode": 12345,
-  "typeOfRequest": "TypeA",
-  "collectionLocationType": "Location1",
-  "well": "WellName",
-  "wBS": "WBS001",
+  "RequestCode": 12346,
+  "typeOfRequest": "TypeB",
+  "collectionLocationType": "Location2",
+  "well": "WellName2",
+  "wBS": "WBS002",
   "requesterLocation": "RequesterLocation1",
-  "projectType": "Project1",
+  "projectType": "Project2",
   "remarks": "This is a remark for the request.",
   "materials": [
     {
-      "itemCode": "M001",
+      "itemCode": "M003",
       "description": "Material Description 1",
       "uOM": "kg",
       "quantity": 100.000,
       "remarks_1": "Remarks for material 1"
+      
     },
     {
-      "itemCode": "M002",
+      "itemCode": "M004",
       "description": "Material Description 2",
       "uOM": "m",
       "quantity": 200.500,
@@ -30,4 +31,21 @@ Content-Type: application/json
 }
 
 ###
-GET  http://localhost:4004/odata/v4/rims/RIMS_REQUEST?$expand=materials
+GET  http://localhost:4004/odata/v4/rims/RIMS_REQUEST/12346?$expand=materials
+
+
+###
+
+POST http://localhost:4004/odata/v4/rims/WELL
+Content-Type: application/json
+
+
+  {
+      "WellCode": "AIWoP",
+      "WellDescription": "AISHWAR"
+  }
+
+###
+
+GET  http://localhost:4004/odata/v4/rims/Material
+

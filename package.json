@@ -27,6 +27,9 @@
     "requires": {
       "auth": "dummy",
       "db": "hana"
+    },
+    "sql": {
+      "native_hana_associations": false
     }
   }
 }
