@@ -3,44 +3,50 @@ const cds = require('@sap/cds');
  
 module.exports = async ( srv) => {
     
-    // srv.on('CREATE', 'RIMS_REQUEST',async req => {
+    //     srv.on('CREATE', 'RIMS_REQUEST', async (req) => {
     //     const tx = cds.transaction(req);
-
-    //         const lastRequest = await tx.run(SELECT.one.from('mydb.RIMS_REQUEST').columns('max(RequestCode) as maxReqCode'));
-    //         console.log(lastRequest);
-    //         const nextReqNo = lastRequest.maxReqCode ? lastRequest.maxReqCode + 1 : 40001;
     
-    //         req.data.RequestCode = nextReqNo;
+    //     const lastRequest = await tx.run(SELECT.one.from('mydb.RIMS_REQUEST').columns('max(RequestCode) as maxReqCode'));
+    //     console.log(lastRequest);
+    //     const nextReqNo = lastRequest.maxReqCode ? lastRequest.maxReqCode + 1 : 40001;
     
-            
-    //         if (req.data.Materials && Array.isArray(req.data.Materials)) {
+    //     req.data.RequestCode = req.data.RequestCode || nextReqNo;
+    
+    //     if (req.data.Materials && Array.isArray(req.data.Materials)) {
     //         req.data.Materials.forEach(material => {
-    //             material.RequestCode_RequestCode = maxReqCode; 
+    //             material.RequestCode_RequestCode = req.data.RequestCode;
     //         });
-    //         }
+    //     }
     
-    //         await tx.run(INSERT.into('mydb.RIMS_REQUEST').entries(req.data));
-    //         return cds.run(SELECT.from('mydb.RIMS_REQUEST').where({ RequestCode : nextReqNo }));
-        
+    //     await tx.run(INSERT.into('mydb.RIMS_REQUEST').entries(req.data));
+    //     return cds.run(SELECT.from('mydb.RIMS_REQUEST').where({ RequestCode: req.data.RequestCode }));
     // });
+
     srv.on('CREATE', 'RIMS_REQUEST', async (req) => {
         const tx = cds.transaction(req);
     
+        // Fetch the last RequestCode as a string and convert it to an integer for incrementing
         const lastRequest = await tx.run(SELECT.one.from('mydb.RIMS_REQUEST').columns('max(RequestCode) as maxReqCode'));
-        console.log(lastRequest);
-        const nextReqNo = lastRequest.maxReqCode ? lastRequest.maxReqCode + 1 : 40001;
+        
+        const nextReqNo = lastRequest.maxReqCode ? (parseInt(lastRequest.maxReqCode) + 1).toString() : "40001";
     
-        req.data.RequestCode = req.data.RequestCode || nextReqNo;
+        // Assign the generated RequestCode to the new request as a string
+        // req.data.RequestCode = req.data.RequestCode || nextReqNo;
+        let paylod = req.data;
+        paylod.RequestCode = nextReqNo;
+        // console.log("gjdgsdj", nextReqNo, req.data,lastRequest.maxReqCode);
     
+        // Update Materials with the RequestCode if provided
         if (req.data.Materials && Array.isArray(req.data.Materials)) {
             req.data.Materials.forEach(material => {
-                material.RequestCode_RequestCode = req.data.RequestCode;
+                material.RequestCode_RequestCode = nextReqNo;
             });
         }
     
-        await tx.run(INSERT.into('mydb.RIMS_REQUEST').entries(req.data));
-        return cds.run(SELECT.from('mydb.RIMS_REQUEST').where({ RequestCode: req.data.RequestCode }));
+        await tx.run(INSERT.into('mydb.RIMS_REQUEST').entries(paylod));
+        return cds.run(SELECT.from('mydb.RIMS_REQUEST').where({ RequestCode: nextReqNo }));
     });
+    
     
 
 

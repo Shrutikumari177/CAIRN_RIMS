@@ -3,8 +3,8 @@ POST http://localhost:4004/odata/v4/rims/RIMS_REQUEST
 Content-Type: application/json
 
 {
- 
-  "typeOfRequest": "TypeB",
+  "RequestCode" : "   ",
+  "typeOfRequest": "TypeD",
   "collectionLocationType": "Location2",
   "well": "WellName2",
   "wBS": "WBS002",

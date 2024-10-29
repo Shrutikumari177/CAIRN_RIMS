@@ -29,12 +29,12 @@ entity COLLECTIONLOC  {
 
 
 entity RIMS_REQUEST {
-    key RequestCode     : Integer default 0; 
-    typeOfRequest       : String(10); 
-    collectionLocationType : String(10); 
+    key RequestCode     :String(50) ; 
+    typeOfRequest       : String(50); 
+    collectionLocationType : String(50); 
     well                : String(50); 
     wBS                 : String(20); 
-    requesterLocation   : String(50);
+    requesterLocation   : String(255);
     projectType         : String(10); 
     remarks             : String(255);
     
