@@ -29,7 +29,7 @@ entity COLLECTIONLOC  {
 
 
 entity RIMS_REQUEST {
-    key RequestCode     : Integer; 
+    key RequestCode     : Integer default 0; 
     typeOfRequest       : String(10); 
     collectionLocationType : String(10); 
     well                : String(50); 

@@ -2,31 +2,48 @@ const cds = require('@sap/cds');
  
  
 module.exports = async ( srv) => {
-    // srv.on('READ', 'WELL', req => {
-    //     return cds.run(SELECT.from('mydb.WELL'));
-    // });
-   
-    // srv.on('READ', 'WBS', req => {
-    //     return cds.run(SELECT.from('mydb.WBS'));
-    // });
+    
+    // srv.on('CREATE', 'RIMS_REQUEST',async req => {
+    //     const tx = cds.transaction(req);
 
-    // srv.on('READ', 'COLLECTIONLOC', req => {
-    //     return cds.run(SELECT.from('mydb.COLLECTIONLOC'));
+    //         const lastRequest = await tx.run(SELECT.one.from('mydb.RIMS_REQUEST').columns('max(RequestCode) as maxReqCode'));
+    //         console.log(lastRequest);
+    //         const nextReqNo = lastRequest.maxReqCode ? lastRequest.maxReqCode + 1 : 40001;
+    
+    //         req.data.RequestCode = nextReqNo;
+    
+            
+    //         if (req.data.Materials && Array.isArray(req.data.Materials)) {
+    //         req.data.Materials.forEach(material => {
+    //             material.RequestCode_RequestCode = maxReqCode; 
+    //         });
+    //         }
+    
+    //         await tx.run(INSERT.into('mydb.RIMS_REQUEST').entries(req.data));
+    //         return cds.run(SELECT.from('mydb.RIMS_REQUEST').where({ RequestCode : nextReqNo }));
+        
     // });
-
-    // srv.on('READ', 'REQUESTTYPE', req => {
-    //     return cds.run(SELECT.from('mydb.REQUESTTYPE'));
-    // });
-    // srv.on('READ', 'PROJECTTYPE', req => {
-    //     return cds.run(SELECT.from('mydb.PROJECTTYPE'));
-    // });
-    // // srv.on('READ', 'Material', req => {
-    //     return cds.run(SELECT.from('mydb.Material'));
-    // });
-    srv.on('CREATE', 'RIMS_REQUEST',async req => {
-        await cds.run(INSERT.into('mydb.RIMS_REQUEST').entries(req.data));
-        return
+    srv.on('CREATE', 'RIMS_REQUEST', async (req) => {
+        const tx = cds.transaction(req);
+    
+        const lastRequest = await tx.run(SELECT.one.from('mydb.RIMS_REQUEST').columns('max(RequestCode) as maxReqCode'));
+        console.log(lastRequest);
+        const nextReqNo = lastRequest.maxReqCode ? lastRequest.maxReqCode + 1 : 40001;
+    
+        req.data.RequestCode = req.data.RequestCode || nextReqNo;
+    
+        if (req.data.Materials && Array.isArray(req.data.Materials)) {
+            req.data.Materials.forEach(material => {
+                material.RequestCode_RequestCode = req.data.RequestCode;
+            });
+        }
+    
+        await tx.run(INSERT.into('mydb.RIMS_REQUEST').entries(req.data));
+        return cds.run(SELECT.from('mydb.RIMS_REQUEST').where({ RequestCode: req.data.RequestCode }));
     });
+    
+
+
     srv.on('CREATE', 'WELL', async req => {
         await cds.run(INSERT.into('mydb.WELL').entries(req.data));
         return cds.run(SELECT.from('mydb.WELL').where({WellCode : req.data.WellCode}))
@@ -38,11 +55,7 @@ module.exports = async ( srv) => {
     srv.on('UPDATE', 'Material', req => {
         return cds.run(UPDATE('mydb.Material').set(req.data).where({ ID: req.data.ID }));
     });
-    // srv.on('UPDATE', 'RIMS_REQUEST', req => {
-        //     return cds.run(UPDATE('mydb.RIMS_REQUEST').set(req.data).where({ ID: req.data.ID }));
-        // });
+    
         
     }
-    // srv.on('READ', 'RIMS_REQUEST', req => {
-    //     return cds.run(SELECT.from('mydb.RIMS_REQUEST'));
-    // });
+    

@@ -3,7 +3,7 @@ POST http://localhost:4004/odata/v4/rims/RIMS_REQUEST
 Content-Type: application/json
 
 {
-  "RequestCode": 12346,
+ 
   "typeOfRequest": "TypeB",
   "collectionLocationType": "Location2",
   "well": "WellName2",
@@ -31,7 +31,7 @@ Content-Type: application/json
 }
 
 ###
-GET  http://localhost:4004/odata/v4/rims/RIMS_REQUEST/12346?$expand=materials
+GET  http://localhost:4004/odata/v4/rims/RIMS_REQUEST?$expand=materials
 
 
 ###
